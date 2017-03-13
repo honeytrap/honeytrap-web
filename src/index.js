@@ -1,5 +1,19 @@
 import React from 'react';
-import { render } from 'react-dom';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import { Router, browserHistory } from 'react-router';
+import promise from 'redux-promise';
+import css from './style.css';
+import routes from './routes';
 
-render(<h1>Hello world!</h1>, document.getElementById('root'));
+import App from './components/app';
+import reducers from './reducers';
 
+const createStoreWithMiddleware = applyMiddleware(promise)(createStore);
+
+ReactDOM.render(
+  <Provider store={createStoreWithMiddleware(reducers)}>
+    <Router history={browserHistory} routes={routes} />
+  </Provider>
+  , document.querySelector('#root'));

@@ -19,7 +19,8 @@
         "react-dom": "^15.4.2"
     },
     "scripts": {
-        "start": "neutrino start --presets neutrino-preset-airbnb-base neutrino-preset-react",
-        "build": "neutrino build --presets neutrino-preset-airbnb-base neutrino-preset-react"
+        "start": "neutrino start --presets neutrino-preset-react",
+        "build": "neutrino build --presets neutrino-preset-react",
+        "server": "node ./server/server.js"
     }
 }
