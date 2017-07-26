@@ -56,6 +56,7 @@ class SessionList extends Component {
 
 	onClickAddSession() {
 		const { dispatch } = this.props;
+    console.debug("test");
 
 		dispatch(addSession(this.makeId()));
 	}
@@ -63,18 +64,17 @@ class SessionList extends Component {
 	render() {
 		return (
 			<div>
-				<SessionListHeader />
 				<div className="block-faded">
 					<table className="table table-generic">
 						<thead>
 							<tr>
-								<th>Session</th>
-								<th>Date</th>
-								<th>Location</th>
-								<th>Started</th>
-								<th>Ended</th>
-								<th>Username</th>
-								<th>Password</th>
+								<th className="header">Session</th>
+								<th className="header">Date</th>
+								<th className="header">Location</th>
+								<th className="header">Started</th>
+								<th className="header">Ended</th>
+								<th className="header">Username</th>
+								<th className="header">Password</th>
 							</tr>
 						</thead>
 						<tbody>

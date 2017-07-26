@@ -1,0 +1,137 @@
+import Websocket from 'reconnecting-websocket';
+
+import {receivedEvent } from '../actions/index.js';
+
+class Socket {
+    constructor(url, token, dispatcher, storeDispatcher) {
+        this.url = url;
+    }
+
+    onclose(event) {
+        var reason = "";
+
+        if (event.code == 1000)
+            reason = "Normal closure, meaning that the purpose for which the connection was established has been fulfilled.";
+        else if (event.code == 1001)
+            reason = "An endpoint is \"going away\", such as a server going down or a browser having navigated away from a page.";
+        else if (event.code == 1002)
+            reason = "An endpoint is terminating the connection due to a protocol error";
+        else if (event.code == 1003)
+            reason = "An endpoint is terminating the connection because it has received a type of data it cannot accept (e.g., an endpoint that understands only text data MAY send this if it receives a binary message).";
+        else if (event.code == 1004)
+            reason = "Reserved. The specific meaning might be defined in the future.";
+        else if (event.code == 1005)
+            reason = "No status code was actually present.";
+        else if (event.code == 1006)
+            reason = "The connection was closed abnormally, e.g., without sending or receiving a Close control frame";
+        else if (event.code == 1007)
+            reason = "An endpoint is terminating the connection because it has received data within a message that was not consistent with the type of the message (e.g., non-UTF-8 [http://tools.ietf.org/html/rfc3629] data within a text message).";
+        else if (event.code == 1008)
+            reason = "An endpoint is terminating the connection because it has received a message that \"violates its policy\". This reason is given either if there is no other sutible reason, or if there is a need to hide specific details about the policy.";
+        else if (event.code == 1009)
+            reason = "An endpoint is terminating the connection because it has received a message that is too big for it to process.";
+        else if (event.code == 1010) // Note that this status code is not used by the server, because it can fail the WebSocket handshake instead.
+            reason = "An endpoint (client) is terminating the connection because it has expected the server to negotiate one or more extension, but the server didn't return them in the response message of the WebSocket handshake. <br /> Specifically, the extensions that are needed are: " + event.reason;
+        else if (event.code == 1011)
+            reason = "A server is terminating the connection because it encountered an unexpected condition that prevented it from fulfilling the request.";
+        else if (event.code == 1015)
+            reason = "The connection was closed due to a failure to perform a TLS handshake (e.g., the server certificate can't be verified).";
+        else
+            reason = "Unknown reason";
+
+        // todo(nl5887): differentiate connection errors and query errors
+        // storeDispatcher(authConnected({connected: false, errors: reason}));
+        this.dispatcher('test');
+        console.debug(reason);
+        //this.storeDispatcher = storeDispatcher;
+    }
+
+    onerror(event) {
+        // the close event contains more feedback
+    }
+
+    onopen(event) {
+        // alert('bla');
+        // storeDispatcher(authConnected({connected: true, errors: null}));
+    }
+
+
+    startWS(dispatch) {
+        /*
+          alert('startWS');
+          const { location }  = window;
+          const url = ((location.protocol === "https:") ? "wss://" : "ws://") + location.host + "/ws";
+
+        */
+        /*
+
+          try {
+          this.we.ws = new FlowWS(url, null, Socket.wsDispatcher, dispatch);
+          } catch (e) {
+          dispatch(error(e));
+          }
+        */
+
+        const websocket = new Websocket(this.url);
+
+        websocket.onopen = this.onopen.bind(this);
+        websocket.onclose = this.onclose.bind(this);
+        websocket.onerror = this.onerror.bind(this);
+        //websocket.onmessage = this.onmessage.bind(this);
+        
+
+        websocket.onmessage = function(event) {
+            console.debug('message', event);
+            //this.dispatcher(JSON.parse(event.data), storeDispatcher);
+            // alert(event.data);
+            dispatch(receivedEvent(JSON.parse(event.data)));
+        };
+
+        this.websocket = websocket;
+    }
+
+    /*
+      postMessage(data, type = ITEMS_REQUEST) {
+      this.websocket.send(
+      JSON.stringify({
+      type: type,
+      ...data
+      })
+      );
+      }
+    */
+
+    close() {
+        this.websocket.close();
+    }
+
+    dispatcher(message, dispatch) {
+        /*
+          if (message.error) {
+          return dispatch(error(message.error.message));
+          }
+
+          switch (message.type) {
+          case ITEMS_RECEIVE:
+          dispatch(receiveItems(message.items));
+          break;
+
+          case INDICES_RECEIVE:
+          dispatch(receiveIndices(message.indices));
+          break;
+
+          case FIELDS_RECEIVE:
+          dispatch(receiveFields(message.fields));
+          break;
+
+          case INITIAL_STATE_RECEIVE:
+          dispatch(receiveInitialState(message.state));
+          break;
+          }
+        */
+        // alert('test');
+    }
+
+};
+
+export default Socket;
