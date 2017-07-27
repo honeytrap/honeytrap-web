@@ -5,6 +5,9 @@ import { connect } from 'react-redux';
 import Header from './header';
 import SessionList from './session-list';
 
+import View from './view';
+import moment from 'moment';
+
 class Dashboard extends Component {
     constructor(props) {
         super(props);
@@ -38,44 +41,41 @@ class Dashboard extends Component {
         });
     }
 
-            render() {
-                const events = this.renderTable();
+    render() {
+        const events = this.renderTable();
 
-                return (
-                    <div className="col-sm-9 content">
-                        <div className="dashhead">
-                            <Header title="Overview" subtitle="Dashboards" />
-                            <div className="btn-toolbar dashhead-toolbar">
-                                <div className="btn-toolbar-item input-with-icon">
-                                    <span className="icon"></span>
-                                </div>
-                            </div>
+        var uptime = moment().diff(this.props.uptime, 'minutes');
+
+        return (
+            <View title="Overview" subtitle="Dashboards">
+                <div className="row">
+                    <div className="col-sm-6">
+                        <div className="statcard p-a-md statcard-success">
+                            <h3 className="statcard-number">
+                                { this.props.events.length }
+                            </h3>
+                            <span className="statcard-desc">Attacks</span>
                         </div>
-                        <hr className="m-t" />
-                        <table className="table">
-                            <thead>
-                                <tr>
-                                    <th className="header">Date</th>
-                                    <th className="header">Category</th>
-                                    <th className="header">Source</th>
-                                    <th className="header">Destination</th>
-                                    <th className="header">Payload</th>
-                                    <th className="header">Message</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            { events }
-                            </tbody>
-                        </table>
                     </div>
-                );
-            }
+                    <div className="col-sm-6">
+                        <div className="statcard p-a-md statcard-primary">
+                            <h3 className="statcard-number">
+                                { uptime }
+                            </h3>
+                            <span className="statcard-desc">Uptime</span>
+                        </div>
+                    </div>
+                </div>
+            </View>
+        );
+    }
 }
 
-            function mapStateToProps(state) {
-                return {
-                    events: state.sessions.events
-                };
-            }
+function mapStateToProps(state) {
+    return {
+        events: state.sessions.events,
+        uptime: state.sessions.uptime
+    };
+}
 
-            export default connect(mapStateToProps)(Dashboard);
+export default connect(mapStateToProps)(Dashboard);

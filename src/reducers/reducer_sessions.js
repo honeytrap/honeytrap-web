@@ -1,11 +1,17 @@
-import { RECEIVED_EVENT, ADD_SESSION, FETCH_SESSIONS, FETCH_SESSION, FETCH_SESSION_CONTENT } from '../actions/index';
+import moment from 'moment';
 
-const INITIAL_STATE = { all: [], events: [], session: null, content: [] };
+import { CONNECTION_STATUS, RECEIVED_EVENT, ADD_SESSION, FETCH_SESSIONS, FETCH_SESSION, FETCH_SESSION_CONTENT } from '../actions/index';
+
+const INITIAL_STATE = { all: [], events: [], session: null, content: [], uptime: moment(), connected: false};
 
 export default function(state = INITIAL_STATE, action) {
 	switch(action.type) {
+	case CONNECTION_STATUS:
+		  return { ...state, connected: action.payload.connected };
 	case RECEIVED_EVENT:
-		  return { ...state, events: [action.payload, ...state.events] };
+      let payload = action.payload;
+      payload.date = moment(payload.date);
+		  return { ...state, events: [payload, ...state.events] };
 	case ADD_SESSION:
 		return { ...state, all: [action.payload, ...state.all] };
 	case FETCH_SESSIONS:

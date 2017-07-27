@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 export const RECEIVED_EVENT = 'RECEIVED_EVENT';
+export const CONNECTION_STATUS = 'CONNECTION_STATUS';
 
 export const ADD_SESSION = 'ADD_SESSION';
 export const FETCH_SESSIONS = 'FETCH_SESSIONS';
@@ -13,6 +14,15 @@ export function receivedEvent(event) {
 	  return {
 		    type: RECEIVED_EVENT,
         payload: event
+	  };
+}
+
+export function connectionStatus(connected) {
+	  return {
+		    type: CONNECTION_STATUS,
+		    payload: {
+            connected: connected, 
+        }
 	  };
 }
 

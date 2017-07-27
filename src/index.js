@@ -2,8 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider, connect } from 'react-redux';
 import { dispatch, compose, createStore, combineReducers, applyMiddleware } from 'redux';
-import { browserHistory, Router, Route } from 'react-router';
+import { browserHistory, Redirect, Router, Route } from 'react-router';
 import { syncHistoryWithStore, routerReducer } from 'react-router-redux';
+
 // import { Intl }  from 'react-intl-es6';
 import { i18n } from './config';
 
@@ -15,8 +16,16 @@ import routes from './routes';
 
 import { Websocket } from './components/index';
 
-import App from './components/app';
+import Navigation from './components/navigation'
+import Search from './components/search'
+
 import reducers from './reducers';
+
+import Dashboard from './components/dashboard';
+import Attacks from './components/attacks';
+import SessionList from './components/session-list';
+import ConfigurationOverview from './components/configuration-overview';
+import App from './components/app';
 
 function configureStore() {
     return createStore(
@@ -39,7 +48,14 @@ ReactDOM.render(
     <div>
         <Websocket store={store}/>
         <Provider store={store}>
-            <Router history={browserHistory} routes={routes} />
+            <Router history={browserHistory} >
+                <Route path="/" component={Dashboard} / >
+                <Route path="/attacks" component={Attacks} />
+                <Route path="/configuration/" component={ConfigurationOverview} />
+                <Route path="/configuration/canaries" component={ConfigurationOverview} />
+                <Route path="/configuration/channels" component={ConfigurationOverview} />
+                <Redirect from='*' to='/404' />
+            </Router>
         </Provider>
     </div>
     , document.querySelector('#root'));
