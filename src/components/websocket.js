@@ -8,7 +8,16 @@ class Websocket extends Component {
     componentWillMount() {
 	      const { dispatch } = this.props;
 
-        let socket = new Socket("ws://172.16.84.192:3001/ws");
+        let url;
+
+        if (process.env.WEBSOCKET_URI) {
+            url = process.env.WEBSOCKET_URI;
+        } else {
+            const {location} = window;
+            url = ((location.protocol === "https:") ? "wss://" : "ws://") + location.host + "/ws";
+        }
+
+        let socket = new Socket(url);
         socket.startWS(dispatch);
     }
 

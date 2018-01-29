@@ -1,6 +1,6 @@
 import Websocket from 'reconnecting-websocket';
 
-import { connectionStatus, receivedEvent } from '../actions/index';
+import { connectionStatus, receivedHotCountries, receivedMetadata, receivedEvent } from '../actions/index';
 
 class Socket {
     constructor(url, token, dispatcher, storeDispatcher) {
@@ -72,11 +72,22 @@ class Socket {
         //websocket.onmessage = this.onmessage.bind(this);
         
 
-        websocket.onmessage = function(event) {
-            console.debug('message', event);
+        websocket.onmessage = function(message) {
+            console.debug('message', message);
             //this.dispatcher(JSON.parse(event.data), storeDispatcher);
             // alert(event.data);
-            dispatch(receivedEvent(JSON.parse(event.data)));
+            let msg = JSON.parse(message.data);
+            switch (msg.type){
+            case 'metadata':
+                dispatch(receivedMetadata(msg.data));
+                break;
+            case 'hot_countries':
+                dispatch(receivedHotCountries(msg.data));
+                break;
+            case 'event':
+                dispatch(receivedEvent(msg.data));
+                break;
+            }
         };
 
         this.websocket = websocket;

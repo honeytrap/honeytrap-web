@@ -70,7 +70,7 @@ class SessionList extends Component {
 							<tr>
 								<th className="header">Session</th>
 								<th className="header">Date</th>
-								<th className="header">Location</th>
+						<th className="header">Location</th>
 								<th className="header">Started</th>
 								<th className="header">Ended</th>
 								<th className="header">Username</th>

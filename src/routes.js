@@ -9,10 +9,12 @@ import Dashboard from './components/dashboard';
 import SessionList from './components/session-list';
 import ConfigurationOverview from './components/configuration-overview';
 import App from './components/app';
+import NotFoundPage from './components/not-found';
 
 export default (
 	  <Route path="/" component={Dashboard}>
 		    <Route path="/configuration/" component={ConfigurationOverview} />
+		    <Route path="/404" component={NotFoundPage} />
         /*
 		    <Route path="/session/:id" component={SessionShow} />
 		    <Route path="/session/:id" component={SessionShow} />

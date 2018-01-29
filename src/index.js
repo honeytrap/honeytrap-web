@@ -23,9 +23,13 @@ import reducers from './reducers';
 
 import Dashboard from './components/dashboard';
 import Attacks from './components/attacks';
+import Events from './components/events';
+import Agents from './components/agents';
+
 import SessionList from './components/session-list';
 import ConfigurationOverview from './components/configuration-overview';
 import App from './components/app';
+import NotFoundPage from './components/not-found';
 
 function configureStore() {
     return createStore(
@@ -50,10 +54,10 @@ ReactDOM.render(
         <Provider store={store}>
             <Router history={browserHistory} >
                 <Route path="/" component={Dashboard} / >
-                <Route path="/attacks" component={Attacks} />
-                <Route path="/configuration/" component={ConfigurationOverview} />
-                <Route path="/configuration/canaries" component={ConfigurationOverview} />
-                <Route path="/configuration/channels" component={ConfigurationOverview} />
+                <Route path="/agents" component={Agents} />
+                <Route path="/events" component={Events} />
+                <Route path="/configuration" component={ConfigurationOverview} />
+                <Route path="/404" component={NotFoundPage} />
                 <Redirect from='*' to='/404' />
             </Router>
         </Provider>

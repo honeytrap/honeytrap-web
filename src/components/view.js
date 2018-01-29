@@ -24,6 +24,14 @@ class View extends Component {
             );
         }
 
+        let versionAvailable = null;
+        if (false) {
+            versionAvailable =
+                <div className="alert alert-warning" role="alert">
+                    New version available. <a>Upgrade</a>.
+                </div>;
+        }
+
         return (
             <div className="container">
                 <div className="row">
@@ -31,17 +39,12 @@ class View extends Component {
                     <div className="col-sm-3 sidebar">
                         <nav className="sidebar-nav">
                             <div className="sidebar-header">
-                                <button className="nav-toggler nav-toggler-sm sidebar-toggler" type="button" data-toggle="collapse" data-target="#nav-toggleable-sm">
-                                    <span className="sr-only">Toggle nav</span>
-                                </button>
-                                <a className="sidebar-brand img-responsive" href="index.html">
+                                <a className="sidebar-brand img-responsive" href="/">
                                     <span className="icon">Honeytrap</span>
                                 </a>
                             </div>
                             <div className="collapse nav-toggleable-sm" id="nav-toggleable-sm">
-                                <div className="alert alert-warning" role="alert">
-                                    New version available. <a>Upgrade</a>.
-                                </div>
+                                { versionAvailable }
                                 <Navigation />
                                 <hr className="visible-xs m-t" />
                             </div>

@@ -8,18 +8,15 @@ class Navigation extends Component {
     render() {
         return (
             <ul className="nav nav-pills nav-stacked">
-                <li className="nav-header">Dashboards</li>
+                <li className="nav-header">Dashboard</li>
                 <NavLink activeClassName="active" to="/">Overview</NavLink>
-                <NavLink activeClassName="active" to="/attacks">Attacks</NavLink>
+                <li className="nav-header">Events</li>
+                <NavLink activeClassName="active" to="/events">Overview</NavLink>
+                <li className="nav-header">Agents</li>
+                <NavLink activeClassName="active" to="/agents">Overview</NavLink>
                 <li className="nav-header">Configuration</li>
                 <NavLink activeClassName="active" to="/configuration/">Overview</NavLink>
-                <NavLink activeClassName="active" to="/configuration/canaries">Canaries</NavLink>
-                <NavLink activeClassName="active" to="/configuration/channels">Channels</NavLink>
-                <li className="nav-header">System</li>
-                <li>
-                    <a>Reboot</a>
-                </li>
-                <li className="nav-header">More</li>
+                <li className="nav-header">Other</li>
                 <li >
                     <a href="https://honeytrap.io/">
                         honeytrap.io

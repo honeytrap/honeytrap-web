@@ -3,12 +3,37 @@ import axios from 'axios';
 export const RECEIVED_EVENT = 'RECEIVED_EVENT';
 export const CONNECTION_STATUS = 'CONNECTION_STATUS';
 
+export const CLEAR_HOT_COUNTRIES = 'CLEAR_HOT_COUNTRIES';
+export const RECEIVED_HOT_COUNTRIES = 'RECEIVED_HOT_COUNTRIES';
+export const RECEIVED_METADATA = 'RECEIVED_METADATA';
+
 export const ADD_SESSION = 'ADD_SESSION';
 export const FETCH_SESSIONS = 'FETCH_SESSIONS';
 export const FETCH_SESSION = 'FETCH_SESSION';
 export const FETCH_SESSION_CONTENT = 'FETCH_SESSION_CONTENT';
 
-const ROOT_URL = 'http://172.16.84.192:3000';
+const ROOT_URL = 'http://127.0.0.1:8089';
+
+export function clearHotCountries(event) {
+	  return {
+		    type: HOT_COUNTRIES,
+        payload: {},
+	  };
+}
+
+export function receivedHotCountries(event) {
+	  return {
+		    type: RECEIVED_HOT_COUNTRIES,
+        payload: event
+	  };
+}
+
+export function receivedMetadata(event) {
+	  return {
+		    type: RECEIVED_METADATA,
+        payload: event
+	  };
+}
 
 export function receivedEvent(event) {
 	  return {
