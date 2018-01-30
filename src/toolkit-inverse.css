@@ -6013,7 +6013,7 @@ body {
   border-spacing: 5px;
 }
 .nav > .nav-header {
-  padding-left: 15px;
+  padding-left: 0px;
   padding-right: 15px;
   margin-bottom: 5px;
   font-size: 85%;

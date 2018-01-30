@@ -53,15 +53,12 @@ class Earth extends React.Component {
     }
 
     componentDidMount() {
-        const context = this.refs.canvas.getContext('2d');
+        let canvas = this.refs.canvas;
+        const context = canvas.getContext('2d');
 
         const angle = 90;
         this.projection = d3.geoOrthographic()
                             .clipAngle(angle);
-
-        this.path = d3.geoPath().
-                       context(context).
-                       projection(this.projection);
 
         var drag = d3.drag()
                      .on('drag', () => {
@@ -88,12 +85,15 @@ class Earth extends React.Component {
                          this.projection.rotate(rotation);
                      });
 
+        const { width, height } = canvas;
+
         var zoom = d3.zoom()
-                     .scaleExtent([50, 2000]);
+                .scaleExtent([200, 2000]);
 
         zoom
             .on('zoom', (event) => {
-                this.projection.scale(d3.event.transform.k);
+                console.log(d3.event.transform);
+                this.projection.scale(d3.event.transform.k, d3.event.transform.k);
             });
 
         d3.select(this.refs.canvas).call(drag);
@@ -123,7 +123,7 @@ class Earth extends React.Component {
           });
     }
 
-    componentDidUpdate() {
+    componentWillUpdate() {
         if (!this.props.countries.length)
             return;
 
@@ -149,14 +149,6 @@ class Earth extends React.Component {
 
         if (this.hotCountries.length == 0)
             return;
-
-        // deduplicate
-        // filter and use last t, and n++
-        /*
-        this.hotCountries = this.hotCountries.filter((elem, pos, arr) => {
-            return arr.indexOf(elem) == pos;
-        });
-        */
 
         // sort on time
         this.hotCountries.sort(function (left, right) {
@@ -197,13 +189,21 @@ class Earth extends React.Component {
 
         const context = canvas.getContext('2d');
 
+        let path = d3.geoPath().
+            context(context).
+            projection(this.projection);
+
         context.clearRect(0, 0, canvas.width, canvas.height);
         var world = this.world;
-        var land = topojson.feature(world, world.objects.land);
 
         context.beginPath();
+        path({type: 'Sphere'});
+        context.fillStyle = '#1b202d';
+        context.fill();
 
-        this.path(land);
+        var land = topojson.feature(world, world.objects.land);
+        context.beginPath();
+        path(land);
         context.fillStyle = 'white';
         context.fill();
 
@@ -212,21 +212,44 @@ class Earth extends React.Component {
 
         this.hotCountries.forEach((country) => {
             context.beginPath();
-            const color = darken('#ff0100', 0 + (moment().diff(country.last, 'minutes') * 10));
+            const color = darken('#440000', 0 + (moment().diff(country.last, 'minutes') * 10));
             context.fillStyle = color;
-            this.path(country);
+            path(country);
             context.fill();
         });
 
         context.beginPath();
         context.fillStyle = 'white';
-        this.path(topojson.mesh(world));
+        path(topojson.mesh(world));
         context.stroke();
+
+        /*
+        var circle = d3.geo.circle().angle(5).origin([-0.8432, 51.4102]);
+	      circles = [];
+	      circles.push( circle() );
+	      circle.origin([-122.2744, 37.7561]);
+	      circles.push( circle() );
+        context.fillStyle = "rgba(0,100,0,.5)";
+        context.lineWidth = .2;
+        context.strokeStyle = "#000";
+        context.beginPath();
+        path({type: "GeometryCollection", geometries: circles});
+        context.fill();
+        context.stroke();
+        */
+
+        /*
+        context.lineWidth = 2;
+        context.strokeStyle = "rgba(0,100,0,.7)";
+        context.beginPath();
+        path({type: "LineString", coordinates: [[-0.8432, 51.4102],[-122.2744, 37.7561]] });
+        context.stroke();
+        */
     }
 
     render() {
         return (
-                <canvas style={{ 'cursor': 'move' }} ref="canvas" width={900} height={600}/>
+                <canvas style={{ 'cursor': 'move' }} ref="canvas" width={900} height={800}/>
         );
     }
 }

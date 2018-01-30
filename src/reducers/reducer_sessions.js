@@ -18,8 +18,6 @@ export default function(state = INITIAL_STATE, action) {
       let payload = action.payload;
       return { ...state, hotCountries: payload };
   }
-	case CLEAR_HOT_COUNTRIES:
-      return { ...state, ...payload, events: [payload, ...state.events], hotCountries: [] };
 	case RECEIVED_EVENT: {
       let payload = action.payload;
       payload.date = moment(payload.date);

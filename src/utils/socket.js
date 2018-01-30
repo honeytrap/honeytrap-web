@@ -73,9 +73,6 @@ class Socket {
         
 
         websocket.onmessage = function(message) {
-            console.debug('message', message);
-            //this.dispatcher(JSON.parse(event.data), storeDispatcher);
-            // alert(event.data);
             let msg = JSON.parse(message.data);
             switch (msg.type){
             case 'metadata':

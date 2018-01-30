@@ -27,7 +27,7 @@ class Events extends Component {
         const { events } = this.props;
 
 
-        return events.map((event, i) => {
+        return events.slice(-10).map((event, i) => {
             let message = (event.message || event.payload );
 
             if (event.category == 'ssh') {
