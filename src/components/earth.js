@@ -11,7 +11,10 @@ import moment from 'moment';
 import * as d3 from 'd3';
 import * as topojson from 'topojson';
 
-import { clearHotCountries } from '../actions/index';
+import Color from 'color';
+import classNames from 'classnames';
+
+import { fetchCountries, clearHotCountries } from '../actions/index';
 
 function darken(col, amt) {
     var usePound = false;
@@ -48,17 +51,26 @@ class Earth extends React.Component {
         this.hotCountries = [];
 
         this.state = {
-           angle: 90,
+            angle: 90,
+            countries: [],
+            loading: true,
         };
     }
 
     componentDidMount() {
+        let { dispatch } = this.props;
+
+        dispatch(fetchCountries()).then(() => {
+            console.log("LOADING FINESHED");
+            this.setState({loading: false});
+        });
+
         let canvas = this.refs.canvas;
         const context = canvas.getContext('2d');
 
         const angle = 90;
         this.projection = d3.geoOrthographic()
-                            .clipAngle(angle);
+            .clipAngle(angle);
 
         var drag = d3.drag()
                      .on('drag', () => {
@@ -83,6 +95,8 @@ class Earth extends React.Component {
                          if (rotation[0] >= 180) rotation[0] -= 360;
 
                          this.projection.rotate(rotation);
+
+                         this.updateCanvas();
                      });
 
         const { width, height } = canvas;
@@ -94,44 +108,30 @@ class Earth extends React.Component {
             .on('zoom', (event) => {
                 console.log(d3.event.transform);
                 this.projection.scale(d3.event.transform.k, d3.event.transform.k);
+                this.updateCanvas();
             });
 
         d3.select(this.refs.canvas).call(drag);
         d3.select(this.refs.canvas).call(zoom);
 
-        d3.queue()
-          .defer(d3.json, "https://unpkg.com/world-atlas@1/world/110m.json")
-          .defer(d3.tsv, "https://unpkg.com/world-atlas@1/world/110m.tsv")
-          .await((error, world, names) => {
-              if (error) throw error;
-
-              this.world = world;
-              this.names = names;
-
-              let countries = topojson.feature(world, world.objects.countries).features;
-              this.countries = countries.filter((d) => {
-                  return this.names.some((n) => {
-                      if (d.id == n.iso_n3) return d.iso_a2 = n.iso_a2;
-                  });
-              }).sort((a, b) => {
-                  return a.iso_a2.localeCompare(b.iso_a2);
-              });
-
-              requestAnimationFrame(() => {
-                  this.loop();
-              });
-          });
+        window.addEventListener("resize", () => this.updateDimensions);
     }
 
-    componentWillUpdate() {
-        if (!this.props.countries.length)
+    componentWillUnmount() {
+        window.removeEventListener("resize", () => this.updateDimensions);
+    }
+ 
+    componentWillReceiveProps(nextProps, nextState) {
+        if (!nextProps.countries.length)
             return;
 
-        let countries = this.countries;
+        const { countries } = nextProps.topology;
         if (!countries)
             return;
 
-        this.hotCountries = this.props.countries.reduce((red, value) => {
+        this.updateCanvas();
+
+        this.hotCountries = nextProps.countries.reduce((red, value) => {
             let country = countries.find((v) => {
                 return v.iso_a2 == value.isocode;
             });
@@ -151,7 +151,7 @@ class Earth extends React.Component {
             return;
 
         // sort on time
-        this.hotCountries.sort(function (left, right) {
+        this.hotCountries.sort((left, right) => {
             return moment(left.last).utc().diff(moment(right.last).utc());
         });
 
@@ -168,94 +168,119 @@ class Earth extends React.Component {
               var r = d3.interpolate(projection.rotate(), [-p[0], -p[1]]);
               return (t) => {
                   projection.rotate(r(t));
+
+                  this.updateCanvas();
               };
           });
 
         return
     }
 
-    loop(time) {
-        this.updateCanvas();
+    updateDimensions() {
+        var w = window,
+            d = document,
+            documentElement = d.documentElement,
+            body = d.getElementsByTagName('body')[0],
+            width = w.innerWidth || documentElement.clientWidth || body.clientWidth,
+            height = w.innerHeight|| documentElement.clientHeight|| body.clientHeight;
 
-        requestAnimationFrame(() => {
-            this.loop();
-        });
+        this.setState({width: width, height: height});
     }
 
     updateCanvas() {
-        let canvas = this.refs.canvas;
-        if (!canvas)
-            return;
+        requestAnimationFrame(() => {
+            let canvas = this.refs.canvas;
+            if (!canvas)
+                return;
 
-        const context = canvas.getContext('2d');
+            const context = canvas.getContext('2d');
 
-        let path = d3.geoPath().
-            context(context).
-            projection(this.projection);
+            let path = d3.geoPath().
+                context(context).
+                projection(
+                    this.projection
+                        .translate([canvas.width/2, (canvas.height * (5/12))])
+                );
 
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        var world = this.world;
+            context.clearRect(0, 0, canvas.width, canvas.height);
 
-        context.beginPath();
-        path({type: 'Sphere'});
-        context.fillStyle = '#1b202d';
-        context.fill();
-
-        var land = topojson.feature(world, world.objects.land);
-        context.beginPath();
-        path(land);
-        context.fillStyle = 'white';
-        context.fill();
-
-        context.strokeStyle = 'gray';
-        context.stroke();
-
-        this.hotCountries.forEach((country) => {
             context.beginPath();
-            const color = darken('#440000', 0 + (moment().diff(country.last, 'minutes') * 10));
-            context.fillStyle = color;
-            path(country);
+            path({type: 'Sphere'});
+            context.fillStyle = '#1b202d';
             context.fill();
+
+            const { world } = this.props.topology;
+            if (!world)
+                return;
+
+            var land = topojson.feature(world, world.objects.land);
+            context.beginPath();
+            path(land);
+            context.fillStyle = 'white';
+            context.fill();
+
+            context.strokeStyle = 'gray';
+            context.stroke();
+
+            const total = this.hotCountries.reduce((total, country) => {
+                total += country.count;
+                return (total);
+            }, 0);
+
+            this.hotCountries.forEach((country) => {
+                const min = 1 + moment().diff(country.last, 'minutes');
+                let color = Color('#440000');
+                context.beginPath();
+                color = color.lighten((Math.log(min) * 50) * (country.count / total));
+                context.fillStyle = color.hexString();
+                path(country);
+                context.fill();
+            });
+
+            context.beginPath();
+            context.fillStyle = 'white';
+            path(topojson.mesh(world));
+            context.stroke();
+
+            /*
+              var circle = d3.geo.circle().angle(5).origin([-0.8432, 51.4102]);
+              circles = [];
+              circles.push( circle() );
+              circle.origin([-122.2744, 37.7561]);
+              circles.push( circle() );
+              context.fillStyle = "rgba(0,100,0,.5)";
+              context.lineWidth = .2;
+              context.strokeStyle = "#000";
+              context.beginPath();
+              path({type: "GeometryCollection", geometries: circles});
+              context.fill();
+              context.stroke();
+            */
+
+            /*
+              context.lineWidth = 2;
+              context.strokeStyle = "rgba(0,100,0,.7)";
+              context.beginPath();
+              path({type: "LineString", coordinates: [[-0.8432, 51.4102],[-122.2744, 37.7561]] });
+              context.stroke();
+            */
         });
-
-        context.beginPath();
-        context.fillStyle = 'white';
-        path(topojson.mesh(world));
-        context.stroke();
-
-        /*
-        var circle = d3.geo.circle().angle(5).origin([-0.8432, 51.4102]);
-	      circles = [];
-	      circles.push( circle() );
-	      circle.origin([-122.2744, 37.7561]);
-	      circles.push( circle() );
-        context.fillStyle = "rgba(0,100,0,.5)";
-        context.lineWidth = .2;
-        context.strokeStyle = "#000";
-        context.beginPath();
-        path({type: "GeometryCollection", geometries: circles});
-        context.fill();
-        context.stroke();
-        */
-
-        /*
-        context.lineWidth = 2;
-        context.strokeStyle = "rgba(0,100,0,.7)";
-        context.beginPath();
-        path({type: "LineString", coordinates: [[-0.8432, 51.4102],[-122.2744, 37.7561]] });
-        context.stroke();
-        */
     }
 
     render() {
+        const { loading } = this.state;
+
         return (
-                <canvas style={{ 'cursor': 'move' }} ref="canvas" width={900} height={800}/>
+            <div>
+                <canvas className={ classNames({ 'hidden': loading }) } style={{ 'cursor': 'move' }} ref="canvas" width={900} height={800}/>
+            </div>
         );
     }
 }
 
 function mapStateToProps(state) {
     return {
+        topology: state.sessions.topology,
     };
 }
 

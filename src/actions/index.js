@@ -1,11 +1,14 @@
 import axios from 'axios';
 
 export const RECEIVED_EVENT = 'RECEIVED_EVENT';
+export const RECEIVED_EVENTS = 'RECEIVED_EVENTS';
 export const CONNECTION_STATUS = 'CONNECTION_STATUS';
 
 export const CLEAR_HOT_COUNTRIES = 'CLEAR_HOT_COUNTRIES';
 export const RECEIVED_HOT_COUNTRIES = 'RECEIVED_HOT_COUNTRIES';
 export const RECEIVED_METADATA = 'RECEIVED_METADATA';
+
+export const FETCH_COUNTRIES = 'FETCH_COUNTRIES';
 
 export const ADD_SESSION = 'ADD_SESSION';
 export const FETCH_SESSIONS = 'FETCH_SESSIONS';
@@ -32,6 +35,13 @@ export function receivedMetadata(event) {
 	  return {
 		    type: RECEIVED_METADATA,
         payload: event
+	  };
+}
+
+export function receivedEvents(data) {
+	  return {
+		    type: RECEIVED_EVENTS,
+        payload: data
 	  };
 }
 
@@ -64,6 +74,15 @@ export function addSession(id) {
 			password: 'root' 
 		}
 	};
+}
+
+export function fetchCountries() {
+    const request = axios.all([axios.get(`https://unpkg.com/world-atlas@1/world/110m.json`), axios.get(`https://unpkg.com/world-atlas@1/world/110m.tsv`)]);
+
+	  return {
+		    type: FETCH_COUNTRIES,
+		    payload: request
+    };
 }
 
 export function fetchSessions() {

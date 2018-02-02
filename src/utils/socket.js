@@ -1,6 +1,6 @@
 import Websocket from 'reconnecting-websocket';
 
-import { connectionStatus, receivedHotCountries, receivedMetadata, receivedEvent } from '../actions/index';
+import { connectionStatus, receivedHotCountries, receivedMetadata, receivedEvent, receivedEvents } from '../actions/index';
 
 class Socket {
     constructor(url, token, dispatcher, storeDispatcher) {
@@ -80,6 +80,9 @@ class Socket {
                 break;
             case 'hot_countries':
                 dispatch(receivedHotCountries(msg.data));
+                break;
+            case 'events':
+                dispatch(receivedEvents(msg.data));
                 break;
             case 'event':
                 dispatch(receivedEvent(msg.data));

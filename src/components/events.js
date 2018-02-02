@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import moment from 'moment';
 
 import { connect } from 'react-redux';
 
@@ -26,8 +27,10 @@ class Events extends Component {
 
         const { events } = this.props;
 
-
-        return events.slice(-10).map((event, i) => {
+        // sort on time
+        return events.sort(function (left, right) {
+            return moment(right.date).utc().diff(moment(left.date).utc());
+        }).slice(0, 10).map((event, i) => {
             let message = (event.message || event.payload );
 
             if (event.category == 'ssh') {

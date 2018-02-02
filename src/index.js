@@ -44,6 +44,9 @@ function configureStore() {
     );
 }
 
+import * as countries from 'i18n-iso-countries';
+countries.registerLocale(require("i18n-iso-countries/langs/en.json"));
+
 const createStoreWithMiddleware = applyMiddleware(promise)(createStore);
 
 const store = createStoreWithMiddleware(reducers);
