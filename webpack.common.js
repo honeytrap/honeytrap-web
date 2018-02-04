@@ -1,8 +1,6 @@
 const dotenv = require('dotenv');
-const { gitDescribeSync } = require('git-describe');
-
 dotenv.config();
-const gitInfo = gitDescribeSync();
+
 const webpack = require('webpack');
 const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
@@ -18,8 +16,7 @@ const SRC_DIR = path.resolve(__dirname, 'src');
 console.log('BUILD_DIR', BUILD_DIR);
 console.log('SRC_DIR', SRC_DIR);
 
-module.exports = (env = {}) => {
-  return {
+module.exports = {
     entry: {
       index: [SRC_DIR + '/index.js']
     },
@@ -28,7 +25,7 @@ module.exports = (env = {}) => {
       filename: '[name].bundle.js'
     },
     // watch: true,
-    devtool: env.prod ? 'source-map' : 'cheap-module-eval-source-map',
+    devtool: 'source-map',
     devServer: {
       contentBase: BUILD_DIR,
       historyApiFallback: {
@@ -85,7 +82,6 @@ module.exports = (env = {}) => {
           test: /\.(png|jpg|jpeg|gif|ico)$/,
           use: [
             {
-              // loader: 'url-loader'
               loader: 'file-loader',
               options: {
                 name: './images/[name].[hash].[ext]'
@@ -102,15 +98,6 @@ module.exports = (env = {}) => {
         }]
     },
     plugins: [
-        new webpack.DefinePlugin({
-            "process.env": {
-                NODE_ENV: JSON.stringify(process.env.NODE_ENV || "development"),
-                WEBSOCKET_URI: process.env.WEBSOCKET_URI ? JSON.stringify(process.env.WEBSOCKET_URI) : null,
-                CLIENT_VERSION: JSON.stringify(gitInfo.raw)
-            }
-        }),
-      new webpack.HotModuleReplacementPlugin(),
-      new webpack.optimize.UglifyJsPlugin({sourceMap: true}),
       new webpack.NamedModulesPlugin(),
       extractCSS,
       extractSCSS,
@@ -122,10 +109,9 @@ module.exports = (env = {}) => {
       ),
       new CopyWebpackPlugin([
           {from: './public/images', to: 'images'},
-          {from: '././node_modules/react-flags/vendor/flags/flags-iso/flat/16', to: 'img/flags/flags-iso/flat/16'}
+          {from: '././node_modules/react-flags/vendor/flags/flags-iso/flat/16', to: 'images/flags/flags-iso/flat/16'}
         ],
         {copyUnmodified: false}
       )
     ]
-  }
-};
+  };

@@ -44,7 +44,6 @@
         "d3-svg": "^0.2.2",
         "d3-transition": "^1.1.1",
         "d3-zoom": "^1.7.1",
-        "extract-text-webpack-plugin": "^3.0.2",
         "i18n-iso-countries": "^3.4.0",
         "immutable": "^3.8.2",
         "moment": "^2.18.1",
@@ -68,9 +67,8 @@
         "world-atlas": "^1.1.4"
     },
     "scripts": {
-        "dev": "webpack -d --progress --watch --profile --json > compilation-stats.json --env.dev",
-        "start": "webpack-dev-server --progress --colors --inline --port 8090 --env.dev",
-        "build": "webpack -p --progress --env.prod",
+        "start": "webpack-dev-server --config webpack.dev.js --progress --colors --inline --port 8090 --env.dev",
+        "build": "webpack --config webpack.prod.js --progress --env.prod",
         "clean": "rimraf ./build"
     }
 }
