@@ -1,11 +1,18 @@
-inside root "json-server --watch db.json"
+# honeytrap-web: repository for honeytrap frontend
 
-inside root "npm run-script server"
+## Development
 
-inside root "npm start"
+```
+yarn start
+```
 
-navigate to "localhost:5000"
+## Development
 
-navigate to "localhost:5000/socket" for socket demo 
+```
+yarn build
+go generate
+```
 
-navigate to "localhost:5000/server" to broadcast to all connected sockets
+## Contributing
+
+Check the issue list at [github.com/honeytrap/honeytrap/issues](https://github.com/honeytrap/honeytrap/issues)
