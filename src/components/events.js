@@ -38,20 +38,21 @@ class Events extends Component {
             };
 
             return (
-                    <tr key={i}>
-                        <td>{event.date.fromNow() }</td>
-                        <td>{event.sensor}</td>
-                        <td>{event.category}</td>
-                        <td><Flag
-                                name={event['source.country.isocode']}
-                                format="png"
-                                pngSize={16}
-                                shiny={false}
-                            />
-                            {event["source-ip"] } ({event["source-port"] })</td>
-                        <td>{event["destination-ip"] } ({event["destination-port"] })</td>
-                        <td>{message}</td>
-                    </tr>
+                <tr key={i}>
+                    <td>{event.date.fromNow() }</td>
+                    <td>{event.sensor}</td>
+                    <td>{event.category}</td>
+                    <td><Flag
+                            name={event['source.country.isocode']}
+                            basePath="images/flags"
+                            format="png"
+                            pngSize={16}
+                            shiny={false}
+                        />
+                        {event["source-ip"] } ({event["source-port"] })</td>
+                    <td>{event["destination-ip"] } ({event["destination-port"] })</td>
+                    <td>{message}</td>
+                </tr>
             );
         });
     }

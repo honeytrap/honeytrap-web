@@ -105,6 +105,7 @@ class Earth extends React.Component {
 
         zoom
             .on('zoom', (event) => {
+                console.log(d3.event.transform);
                 this.projection.scale(d3.event.transform.k, d3.event.transform.k);
                 this.updateCanvas();
             });

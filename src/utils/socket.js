@@ -8,21 +8,6 @@ class Socket {
     }
 
     startWS(dispatch) {
-        /*
-          alert('startWS');
-          const { location }  = window;
-          const url = ((location.protocol === "https:") ? "wss://" : "ws://") + location.host + "/ws";
-
-        */
-        /*
-
-          try {
-          this.we.ws = new FlowWS(url, null, Socket.wsDispatcher, dispatch);
-          } catch (e) {
-          dispatch(error(e));
-          }
-        */
-
         const websocket = new Websocket(this.url);
 
         websocket.onopen = function(event) {
@@ -92,17 +77,6 @@ class Socket {
 
         this.websocket = websocket;
     }
-
-    /*
-      postMessage(data, type = ITEMS_REQUEST) {
-      this.websocket.send(
-      JSON.stringify({
-      type: type,
-      ...data
-      })
-      );
-      }
-    */
 
     close() {
         this.websocket.close();

@@ -34,9 +34,6 @@ class Dashboard extends Component {
     }
 
     render() {
-        if (!this.props.metadata)
-            return <div>connecting</div>;
-
         const { start } = this.props.metadata;
 
         const { now } = this.state;
@@ -56,6 +53,7 @@ class Dashboard extends Component {
                     <Flag
                         name={isocode}
                         format="png"
+                        basePath="images/flags"
                         pngSize={16}
                         shiny={false}
                     />
@@ -81,16 +79,17 @@ class Dashboard extends Component {
             return red;
         }, []).slice(0, 10).map((event, i) => {
             return <tr key={i} className={ classNames({'show': (20 > i) }) } style={{ fontFamily: 'courier', fontSize: '0.8em' }}>
-                <td style={{ border: 'none', padding: '2px' }}>
+            <td style={{ border: 'none', padding: '2px' }}>
             <Flag
             name={event['source.country.isocode']}
             format="png"
+            basePath="images/flags"
             pngSize={16}
             shiny={false}
             />
-                </td>
-                <td style={{ border: 'none', padding: '2px' }}>
-                    { `${event["source-ip"]}` }
+            </td>
+            <td style={{ border: 'none', padding: '2px' }}>
+            { `${event["source-ip"]}` }
                 </td>
                 <td style={{ border: 'none', padding: '2px' }}>
                     { `${event["category"]}` }
